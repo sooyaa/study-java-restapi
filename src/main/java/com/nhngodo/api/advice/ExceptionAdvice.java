@@ -1,5 +1,6 @@
 package com.nhngodo.api.advice;
 
+import com.nhngodo.api.advice.exception.CEmailSigninFailedException;
 import com.nhngodo.api.advice.exception.CUserNotFoundException;
 import com.nhngodo.api.model.response.CommonResult;
 import com.nhngodo.api.service.ResponseService;
@@ -42,5 +43,11 @@ public class ExceptionAdvice {
     // code정보, 추가 argument로 현재 locale에 맞는 메시지를 조회합니다.
     private String getMessage(String code, Object[] args) {
         return messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
+    }
+
+    @ExceptionHandler(CEmailSigninFailedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult emailSigninFailed(HttpServletRequest request, CEmailSigninFailedException e) {
+        return responseService.getFailResult(Integer.valueOf(getMessage("emailSigninFailed.code")), getMessage("emailSigninFailed.msg"));
     }
 }
